@@ -11,12 +11,17 @@ const handlePostback = (event, pageAccessToken) => {
           type: "template",
           payload: {
             template_type: "button",
-            text: `Hello There!! Im Heru Bot your Ai Companion\n\nType "help" to see commands or click the "Help" button below.`,
+            text: `Hello There!! I'm Heru Bot, your AI Companion\n\nType "help" to see commands or click the "help" button below.\n\n🌟 Hidden Features\nAutodownload: Facebook reels, TikTok, Instagram by sending the link.`,
             buttons: [
               {
                 type: "web_url",
                 url: "https://tigang.vercel.app/",
                 title: "PRIVACY POLICY"
+              },
+              {
+                type: "web_url",
+                url: "https://www.facebook.com/100077070762554",
+                title: "CONTACT US"
               }
             ]
           }
@@ -33,7 +38,7 @@ const handlePostback = (event, pageAccessToken) => {
       sendMessage(chilli, combinedMessage, pageAccessToken);
 
     } else {
-      sendMessage(chilli, { text: `You sent a postback with payload: ${pogi}` }, pageAccessToken);
+      sendMessage(chilli, pageAccessToken);
     }
   } else {
     console.error('Invalid postback event data');

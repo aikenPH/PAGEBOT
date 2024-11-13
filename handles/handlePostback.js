@@ -1,48 +1,60 @@
+/*const { sendMessage } = require('./sendMessage');
+
+function handlePostback(event, pageAccessToken) {
+  const senderId = event.sender.id;
+  const payload = event.postback.payload;
+
+}
+
+module.exports = { handlePostback };*/
+
 const { sendMessage } = require('./sendMessage');
 
-const handlePostback = (event, pageAccessToken) => {
-  const chilli = event.sender?.id;
-  const pogi = event.postback?.payload;
+function handlePostback(event, pageAccessToken) {
+  const senderId = event.sender.id;
+  const payload = event.postback.payload;
 
-  if (chilli && pogi) {
-    if (pogi === 'GET_STARTED_PAYLOAD') {
-      const combinedMessage = {
-        attachment: {
-          type: "template",
-          payload: {
-            template_type: "button",
-            text: `Hello There!! I'm Heru Bot, your AI Companion\n\nType "help" to see commands or click the "help" button below.\n\n🌟 Hidden Features\nAutodownload: Facebook reels, TikTok, Instagram by sending the link.`,
-            buttons: [
-              {
-                type: "web_url",
-                url: "https://tigang.vercel.app/",
-                title: "PRIVACY POLICY"
-              },
-              {
-                type: "web_url",
-                url: "https://www.facebook.com/100077070762554",
-                title: "CONTACT US"
-              }
-            ]
-          }
+  if (payload === "GET_STARTED_PAYLOAD") {
+    sendMessage(senderId, "Welcome! I'm here to help you.", pageAccessToken);
+
+    const messageWithQuickReplies = {
+      text: "What would you like to do next?",
+      quick_replies: [
+        {
+          content_type: "text",
+          title: "Help",
+          payload: "HELP_PAYLOAD"
         },
-        quick_replies: [
-          {
-            content_type: "text",
-            title: "Help",
-            payload: "HELP_PAYLOAD"
-          }
-        ]
-      };
+        {
+          content_type: "text",
+          title: "Privacy",
+          payload: "PRIVACY_POLICY_PAYLOAD"
+        }
+      ]
+    };
 
-      sendMessage(chilli, combinedMessage, pageAccessToken);
+    sendMessage(senderId, messageWithQuickReplies, pageAccessToken);
 
-    } else {
-      sendMessage(chilli, pageAccessToken);
-    }
-  } else {
-    console.error('Invalid postback event data');
+    const contactUsButtonMessage = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: "Need further assistance?",
+          buttons: [
+            {
+              type: "web_url",
+              title: "Contact Us",
+              url: "https://www.facebook.com/jaymar.dev.00",
+              webview_height_ratio: "full"
+            }
+          ]
+        }
+      }
+    };
+
+    sendMessage(senderId, contactUsButtonMessage, pageAccessToken);
   }
-};
+}
 
 module.exports = { handlePostback };

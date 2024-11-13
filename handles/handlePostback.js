@@ -15,10 +15,14 @@ function handlePostback(event, pageAccessToken) {
   const payload = event.postback.payload;
 
   if (payload === "GET_STARTED_PAYLOAD") {
-    sendMessage(senderId, "Welcome! I'm here to help you.", pageAccessToken);
+    // Updated welcome message
+    sendMessage(
+      senderId, 
+      "Welcome! I'm Heru Bot, your AI Companion. Type the down button below if you need assistance. Welcome! I'm here to help you.",
+      pageAccessToken
+    );
 
     const messageWithQuickReplies = {
-      text: "What would you like to do next?",
       quick_replies: [
         {
           content_type: "text",
@@ -40,7 +44,6 @@ function handlePostback(event, pageAccessToken) {
         type: "template",
         payload: {
           template_type: "button",
-          text: "Need further assistance?",
           buttons: [
             {
               type: "web_url",

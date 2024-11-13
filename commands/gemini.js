@@ -12,10 +12,9 @@ module.exports = {
 
     if (!userPrompt && !imageUrl) {
       return sendMessage(senderId, { 
-        text: `Usage: gemini [your_question]\nExample: gemini hello or Reply the and gemini describe this photo\n✨ Guide:
+        text: `Usage: gemini [your_question]\nExample: gemini hello 'gemini describe this photo'\n✨ Guide:
 ❶ Send an image with [gemini and question].
-❷ Reply to an image with "gemini and question".
-❸ Send [gemini and question] for text-only queries.` 
+❷ Send [gemini and question] for text-only queries.` 
       }, pageAccessToken);
     }
 
@@ -32,7 +31,8 @@ module.exports = {
       const response = await handleImageRecognition(apiUrl, userPrompt, imageUrl);
       const result = response.gemini;
 
-      await sendConcatenatedMessage(senderId, result, pageAccessToken);
+      const header = "📸 𝗚𝗘𝗠𝗜𝗡𝗜-𝗚𝗢𝗢𝗚𝗟𝗘\n・───────────・\n";
+      await sendConcatenatedMessage(senderId, `${header}${result}`, pageAccessToken);
 
     } catch (error) {
       console.error("Error in Gemini command:", error);

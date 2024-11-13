@@ -44,11 +44,10 @@ module.exports = {
     }
 
     if (pogi[0] && pogi[0].toLowerCase() === 'all') {
-      const helpTextMessage = `${convertToGothic('╭─『 HERUBOT』')}\n` +
-        `${convertToGothic(`│✧ Commands List`)}\n` +
+      const helpTextMessage = `${convertToGothic('╭─『 HERU CHATBOT 』')}\n` +
+        commands.map(cmd => `${convertToGothic(`│✧ ${cmd.title}`)}`).join('\n') + `\n` +
         `${convertToGothic('╰───────────◊')}\n\n` +
-        `${commands.map((cmd, index) => `${convertToGothic(`${index + 1}. ${cmd.title}`)}`).join('\n')}\n\n` +
-        `${convertToGothic(`Dev: Jay Mar`)}`;
+        `${convertToGothic(`Dev: Jay Mar & YOU`)}`;
 
       return sendMessage(kupal, { text: helpTextMessage }, sili);
     }
@@ -61,13 +60,12 @@ module.exports = {
       return sendMessage(kupal, { text: convertToGothic(`Invalid page number. There are only ${totalPages} pages.`) }, sili);
     }
 
-    const helpTextMessage = `${convertToGothic('╭─『 HERUBOT』')}\n` +
-      `${convertToGothic(`│✧ Commands List`)}\n` +
+    const helpTextMessage = `${convertToGothic('╭─『 HERU CHATBOT 』')}\n` +
+      commandsForPage.map(cmd => `${convertToGothic(`│✧ ${cmd.title}`)}`).join('\n') + `\n` +
       `${convertToGothic('╰───────────◊')}\n\n` +
-      `${commandsForPage.map((cmd, index) => `${convertToGothic(`${startIndex + index + 1}. ${cmd.title}`)}`).join('\n')}\n\n` +
       `${convertToGothic(`(Page ${page} of ${totalPages})`)}\n` +
-      `${convertToGothic('Type !help <page number> to see more commands.')}\n\n` +
-      `${convertToGothic('Dev: Jay Mar')}`;
+      `${convertToGothic('Type !help <page number> to see more commands & To see all commands Type "help all" to see all Commands.')}\n\n` +
+      `${convertToGothic('Dev: Jay Mar & YOU')}`;
 
     const quickRepliesPage = commandsForPage.map((cmd) => ({
       content_type: "text",

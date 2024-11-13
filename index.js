@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const path = require('path');
+const axios = require('axios');
 const { handleMessage } = require('./handles/handleMessage');
 const { handlePostback } = require('./handles/handlePostback');
 
@@ -14,6 +16,42 @@ app.use(bodyParser.json());
 
 const VERIFY_TOKEN = 'pagebot';
 const PAGE_ACCESS_TOKEN = fs.readFileSync('token.txt', 'utf8').trim();
+const config = { pageAccessToken: PAGE_ACCESS_TOKEN };
+
+const loadMenuCommands = async () => {
+  try {
+    const commandsDir = path.join(__dirname, 'commands');
+    const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
+
+    const commandsList = commandFiles.map(file => {
+      const command = require(path.join(commandsDir, file));
+      return { name: command.name, description: command.description || 'No description available' };
+    });
+
+    const loadCmd = await axios.post(`https://graph.facebook.com/v21.0/me/messenger_profile?access_token=${config.pageAccessToken}`, {
+      commands: [
+        {
+          locale: "default",
+          commands: commandsList
+        }
+      ]
+    }, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (loadCmd.data.result === "success") {
+      console.log("Commands loaded!");
+    } else {
+      console.log("Failed to load commands");
+    }
+  } catch (error) {
+    console.error('Error loading commands:', error);
+  }
+};
+
+loadMenuCommands();
 
 app.get('/webhook', (req, res) => {
   const { 'hub.mode': mode, 'hub.verify_token': token, 'hub.challenge': challenge } = req.query;

@@ -11,11 +11,11 @@ const handlePostback = (event, pageAccessToken) => {
           type: "template",
           payload: {
             template_type: "button",
-            text: `Welcome To Heru Bot\nGuide:\nType "help" to see commands or click the "Help" button below.`,
+            text: `Hello There!! Im Heru Bot your Ai Companion\n\nType "help" to see commands or click the "Help" button below.`,
             buttons: [
               {
                 type: "web_url",
-                url: "https://tigang.vercel.app",
+                url: "https://tigang.vercel.app/",
                 title: "PRIVACY POLICY"
               }
             ]

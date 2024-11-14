@@ -45,7 +45,7 @@ module.exports = {
       const result = response.data.result;
 
       if (result) {
-        const header = '🤖 𝗪𝗜𝗭𝗔𝗥𝗗\n・───────────・\n';
+        const header = '🤖 𝗪𝗜𝗭𝗔𝗥𝗗 𝗔𝗜\n・───────────・\n';
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {

@@ -25,27 +25,27 @@ function splitMessageIntoChunks(message, chunkSize) {
 }
 
 module.exports = {
-  name: 'gemma',
-  description: 'Interacts with Gemma AI.',
-  usage: 'gemma <prompt>',
+  name: 'llama',
+  description: 'Interacts with Llama AI.',
+  usage: 'llama <prompt>',
   author: 'Developer',
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       await sendMessage(senderId, {
-        text: 'Usage: gemma [your_question]\nExample: gemma explain quantum mechanics'
+        text: 'Usage: llama [your_question]\nExample: llama what is artificial intelligence?'
       }, pageAccessToken);
       return;
     }
 
     const prompt = args.join(' ');
-    const apiUrl = `${api.joshWebApi}/api/gemma-7b?q=${encodeURIComponent(prompt)}`;
+    const apiUrl = `${api.joshWebApi}/api/llama-3-70b?q=${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);
       const result = response.data.result;
 
       if (result) {
-        const header = '🤖 𝗚𝗘𝗠𝗠𝗔 𝗔𝗜\n・───────────・\n';
+        const header = '🤖 𝗟𝗟𝗔𝗠𝗔\n・───────────・\n';
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {

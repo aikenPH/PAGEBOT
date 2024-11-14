@@ -50,7 +50,7 @@ module.exports = {
       const result = response.data.result;
 
       if (result) {
-        const header = '🤖 𝗗𝗘𝗘𝗣𝗖𝗢𝗗𝗘𝗥\n・───────────・\n';
+        const header = '🤖 𝗗𝗘𝗘𝗣𝗖𝗢𝗗𝗘𝗥 𝗔𝗜\n・───────────・\n';
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {

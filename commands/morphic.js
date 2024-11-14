@@ -45,7 +45,7 @@ module.exports = {
       const result = response.data.result;
 
       if (result) {
-        const header = '🤖 𝗠𝗢𝗥𝗣𝗛𝗜𝗖\n・───────────・\n';
+        const header = '🤖 𝗠𝗢𝗥𝗣𝗛𝗜𝗖 𝗔𝗜\n・───────────・\n';
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {

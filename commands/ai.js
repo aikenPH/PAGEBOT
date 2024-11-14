@@ -48,7 +48,7 @@ module.exports = {
         await sendConcatenatedMessage(senderId, result, pageAccessToken);
       } else {
         await sendMessage(senderId, {
-          text: 'An error occurred while fetching the response. Please try again later.'
+          text: 'Oops! Something went wrong with the API. It might be down, or you can try your question again'
         }, pageAccessToken);
       }
     } catch (error) {

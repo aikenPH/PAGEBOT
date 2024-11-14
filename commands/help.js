@@ -46,8 +46,8 @@ module.exports = {
     if (pogi[0] && pogi[0].toLowerCase() === 'all') {
       const helpTextMessage = `${convertToGothic('╭─『 HERU CHATBOT 』')}\n` +
         commands.map(cmd => `${convertToGothic(`│✧ ${cmd.title}`)}`).join('\n') + `\n` +
-        `${convertToGothic('╰───────────◊')}\n\n` +
-        `${convertToGothic(`Dev: Jay Mar & YOU`)}`;
+        `${convertToGothic('╰───────────◊')}\n` +
+        `${convertToGothic(`Dev: Jay Mar & My Girl`)}`;
 
       return sendMessage(kupal, { text: helpTextMessage }, sili);
     }
@@ -64,8 +64,8 @@ module.exports = {
       commandsForPage.map(cmd => `${convertToGothic(`│✧ ${cmd.title}`)}`).join('\n') + `\n` +
       `${convertToGothic('╰───────────◊')}\n\n` +
       `${convertToGothic(`(Page ${page} of ${totalPages})`)}\n` +
-      `${convertToGothic('Type !help <page number> to see more commands & To see all commands Type "help all" to see all Commands.')}\n\n` +
-      `${convertToGothic('Dev: Jay Mar & YOU')}`;
+      `${convertToGothic('Type "help [page number]" to see more commands & To see all commands Type "help all" to show all commands.')}\n` +
+      `${convertToGothic('Dev: Jay Mar & My Girl')}`;
 
     const quickRepliesPage = commandsForPage.map((cmd) => ({
       content_type: "text",

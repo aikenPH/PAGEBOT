@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
+const api = require('../handles/api');
 
 module.exports = {
   name: 'humanize',
@@ -15,11 +16,11 @@ module.exports = {
     }
 
     const text = pogi.join(' ');
-    const apiUrl = `https://kaiz-apis.gleeze.com/api/humanizer?q=${encodeURIComponent(text)}`;
+    const apiUrl = `${api.jonelApi}/api/aihuman?text=${encodeURIComponent(text)}`;
 
     try {
       const response = await axios.get(apiUrl);
-      const { response: message, error } = response.data;
+      const { message, error } = response.data;
 
       if (error === "No") {
         const fullResponse = `🤖 𝗛𝗨𝗠𝗔𝗡𝗜𝗭𝗘 𝗔𝗜\n・───────────・\n${message}`;
@@ -56,4 +57,4 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-}
+                                       }

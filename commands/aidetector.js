@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
-const api = require('../handles/api);
+const api = require('../handles/api');
 
 async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;

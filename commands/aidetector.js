@@ -26,7 +26,7 @@ function splitMessageIntoChunks(message, chunkSize) {
 
 module.exports = {
   name: 'aidetector',
-  description: 'Analyzes a query using the AI Detector API.',
+  description: 'Analyzes text using the AI Detector API.',
   usage: 'aidetector <query>',
   author: 'Developer',
   async execute(senderId, args, pageAccessToken) {
@@ -42,15 +42,22 @@ module.exports = {
 
     try {
       const response = await axios.get(apiUrl);
-      const result = response.data.response;
+      const apiData = response.data.response.data;
 
-      if (result) {
+      if (apiData) {
+        const msgText = `
+𝗥𝗲𝘀𝘂𝗹𝘁: ${apiData.feedback}
+𝗛𝘂𝗺𝗮𝗻 𝗣𝗲𝗿𝗰𝗲𝗻𝘁𝗮𝗴𝗲: ${apiData.isHuman}%
+𝗔𝗜 𝗣𝗲𝗿𝗰𝗲𝗻𝘁𝗮𝗴𝗲: ${apiData.fakePercentage}%
+𝗧𝗲𝘅𝘁 𝗪𝗼𝗿𝗱𝘀: ${apiData.textWords}
+𝗔𝗜 𝗪𝗼𝗿𝗱𝘀: ${apiData.aiWords}
+        `;
         const header = `🤖 𝗔𝗜 𝗗𝗘𝗧𝗘𝗖𝗧𝗢𝗥\n・───────────・\n`;
-        const messageWithHeader = `${header}${result}`;
-        await sendConcatenatedMessage(senderId, messageWithHeader, pageAccessToken);
+        const fullMessage = `${header}${msgText}`;
+        await sendConcatenatedMessage(senderId, fullMessage, pageAccessToken);
       } else {
         await sendMessage(senderId, {
-          text: 'Oops! The AI Detector API did not return a response. Please try again.'
+          text: 'The AI Detector API did not return a valid response. Please try again.'
         }, pageAccessToken);
       }
     } catch (error) {
@@ -61,4 +68,4 @@ module.exports = {
     }
   }
 };
-                      
+    

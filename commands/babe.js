@@ -37,13 +37,13 @@ module.exports = {
       return;
     }
 
-    const apiUrl = `${api.markApi}/api/ashley?query=${encodeURIComponent(chilli)}`;
+    const apiUrl = `${api.markApi}/new/api/ashley?query=${encodeURIComponent(chilli)}`;
 
     try {
       const response = await axios.get(apiUrl);
       const ashleyResponse = response.data.result || 'No response from Ashley.';
 
-      const formattedResponse = `𝗛𝗢𝗥𝗡𝗬 𝗔𝗜 🥵\n\n${ashleyResponse}`;
+      const formattedResponse = `𝗛𝗢𝗥𝗡𝗬 𝗔𝗜\n${ashleyResponse}`;
       await sendConcatenatedMessage(senderId, formattedResponse, pageAccessToken);
 
     } catch (error) {

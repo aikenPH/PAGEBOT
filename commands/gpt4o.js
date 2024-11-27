@@ -25,7 +25,7 @@ async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
 
 module.exports = {
   name: 'gpt4o',
-  description: 'Interact to gpt4o',
+  description: 'Generates a response to the provided question using GPT-4O API.',
   usage: 'gpt4o <question>',
   author: 'Jay Mar',
   async execute(senderId, args, pageAccessToken) {
@@ -42,9 +42,9 @@ module.exports = {
     try {
       const response = await axios.get(apiUrl);
 
-      if (response.data && response.data.response) {
-        const answer = response.data.response;
-        const header = '🤖 𝗚𝗣𝗧-4𝗢\n・─────────────・\n';
+      if (response.data && response.data.result) {
+        const answer = response.data.result;
+        const header = '🤖 𝗚𝗣𝗧-4𝗢 𝗔𝗜\n・─────────────・\n';
         await sendConcatenatedMessage(senderId, header + answer, pageAccessToken);
       } else {
         await sendMessage(senderId, {

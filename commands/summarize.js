@@ -25,7 +25,7 @@ async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
 
 module.exports = {
   name: 'summarize',
-  description: 'Summarizes the provided text using an API.',
+  description: 'Summarizes your provided text.',
   usage: 'summarize <text>',
   author: 'Jay Mar',
   async execute(senderId, args, pageAccessToken) {

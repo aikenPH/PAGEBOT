@@ -43,7 +43,7 @@ module.exports = {
       const response = await axios.get(apiUrl);
       const ashleyResponse = response.data.result || 'No response from Ashley.';
 
-      const formattedResponse = `𝗛𝗢𝗥𝗡𝗬 𝗔𝗜\n${ashleyResponse}`;
+      const formattedResponse = `🥵 𝗛𝗢𝗥𝗡𝗬 𝗔𝗜\n・──────────────・\n${ashleyResponse}`;
       await sendConcatenatedMessage(senderId, formattedResponse, pageAccessToken);
 
     } catch (error) {

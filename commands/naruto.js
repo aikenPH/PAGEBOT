@@ -29,7 +29,7 @@ function splitMessageIntoChunks(message, chunkSize) {
 }
 
 module.exports = {
-  name: 'naturo',
+  name: 'naruto',
   description: 'Interact with Naruto AI.',
   usage: 'naturo <your_question>',
   author: 'Jay Mar',

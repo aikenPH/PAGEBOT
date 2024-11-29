@@ -24,7 +24,6 @@ async function handleMessage(event, pageAccessToken) {
 
   const senderId = event.sender.id;
 
-  // Handle attachments
   if (event.message && event.message.attachments) {
     const imageAttachment = event.message.attachments.find(att => att.type === 'image');
     const videoAttachment = event.message.attachments.find(att => att.type === 'video');
@@ -33,16 +32,54 @@ async function handleMessage(event, pageAccessToken) {
     if (videoAttachment) lastVideoByUser.set(senderId, videoAttachment.payload.url);
   }
 
-  // Handle text messages
   if (event.message && event.message.text) {
     const messageText = event.message.text.trim().toLowerCase();
 
-    // Predefined handlers for Facebook, TikTok, and Instagram
     if (await handleFacebookReelsVideo(event, pageAccessToken)) return;
     if (await handleTikTokVideo(event, pageAccessToken)) return;
     if (await handleInstagramVideo(event, pageAccessToken)) return;
 
-    // Custom command: Gemini
+    if (messageText === 'removebg') {
+      const lastImage = lastImageByUser.get(senderId);
+      if (lastImage) {
+        try {
+          await commands.get('removebg').execute(senderId, [], pageAccessToken, lastImage);
+          lastImageByUser.delete(senderId);
+        } catch (error) {
+          await sendMessage(senderId, { text: 'An error occurred while removing the background.' }, pageAccessToken);
+        }
+      } else {
+        await sendMessage(senderId, { text: 'Please send an image first, then type "removebg" to remove its background.' }, pageAccessToken);
+      }
+      return;
+    }
+
+    if (messageText === 'imgur') {
+      const lastImage = lastImageByUser.get(senderId);
+      const lastVideo = lastVideoByUser.get(senderId);
+      const mediaToUpload = lastImage || lastVideo;
+
+      try {
+        await commands.get('imgur').execute(senderId, [], pageAccessToken, mediaToUpload);
+        lastImageByUser.delete(senderId);
+        lastVideoByUser.delete(senderId);
+      } catch (error) {
+        await sendMessage(senderId, { text: 'An error occurred while uploading to Imgur.' }, pageAccessToken);
+      }
+      return;
+    }
+
+    if (messageText === 'remini') {
+      const lastImage = lastImageByUser.get(senderId);
+      try {
+        await commands.get('remini').execute(senderId, [], pageAccessToken, event, lastImage);
+        lastImageByUser.delete(senderId);
+      } catch (error) {
+        await sendMessage(senderId, { text: 'An error occurred while enhancing the image.' }, pageAccessToken);
+      }
+      return;
+    }
+
     if (messageText.startsWith('gemini')) {
       const lastImage = lastImageByUser.get(senderId);
       const args = messageText.split(/\s+/).slice(1);
@@ -56,24 +93,6 @@ async function handleMessage(event, pageAccessToken) {
       return;
     }
 
-    // Custom command: Pixtral
-    if (messageText === 'pixtral') {
-      const lastImage = lastImageByUser.get(senderId);
-
-      if (lastImage) {
-        try {
-          await commands.get('pixtral').execute(senderId, [], pageAccessToken, lastImage);
-          lastImageByUser.delete(senderId);
-        } catch (error) {
-          await sendMessage(senderId, { text: 'An error occurred while processing the Pixtral command.' }, pageAccessToken);
-        }
-      } else {
-        await sendMessage(senderId, { text: 'Please send an image first, then type "pixtral" to process it.' }, pageAccessToken);
-      }
-      return;
-    }
-
-    // Generic command handling
     let commandName, args;
     if (messageText.startsWith('-')) {
       const argsArray = messageText.slice(1).trim().split(/\s+/);
@@ -85,7 +104,6 @@ async function handleMessage(event, pageAccessToken) {
       args = words;
     }
 
-    // Execute command if found
     if (commands.has(commandName)) {
       const command = commands.get(commandName);
       try {
@@ -106,7 +124,16 @@ async function handleMessage(event, pageAccessToken) {
         sendMessage(senderId, { text: `There was an error executing the command "${commandName}". Please try again later.` }, pageAccessToken);
       }
     } else {
-      sendMessage(senderId, { text: 'Invalid command. Please try again.' }, pageAccessToken);
+      sendMessage(senderId, {
+        text: `Unknown command: "${commandName}". Type "help" for a list of available commands.`,
+        quick_replies: [
+          {
+            content_type: "text",
+            title: "Help",
+            payload: "HELP_PAYLOAD"
+          }
+        ]
+      }, pageAccessToken);
     }
   }
 }
@@ -130,4 +157,3 @@ async function getAttachments(mid, pageAccessToken) {
 }
 
 module.exports = { handleMessage };
-      

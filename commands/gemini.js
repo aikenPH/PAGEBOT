@@ -4,85 +4,68 @@ const api = require('../handles/api');
 
 module.exports = {
   name: "gemini",
-  description: "Interact with Google Gemini for image recognition or text-based queries.",
-  author: "Developer",
+  description: "Analyze images or answer text-based queries using gemini.",
+  usage: "gemini <question> | [Attach or Reply to an image]",
+  author: "Jay Mar",
 
   async execute(senderId, args, pageAccessToken, event, imageUrl) {
-    const userPrompt = args.join(" ");
+    const userPrompt = args.join(" ").trim();
 
-    if (!userPrompt && !imageUrl) {
-      return sendMessage(senderId, { 
-        text: `Usage: gemini [your_question]\nExample: gemini hello 'gemini describe this photo'\n✨ Guide:
-❶ Send an image with [gemini and question].
-❷ Send [gemini and question] for text-only queries.` 
+    if (!userPrompt && !imageUrl && !getAttachmentUrl(event)) {
+      return sendMessage(senderId, {
+        text: "Usage: Send 'gemini <question>' with image or without an image."
       }, pageAccessToken);
     }
 
+    if (!imageUrl) {
+      imageUrl = getAttachmentUrl(event) || (await getRepliedImage(event, pageAccessToken));
+    }
+
     try {
-      if (!imageUrl) {
-        if (event.message.reply_to && event.message.reply_to.mid) {
-          imageUrl = await getRepliedImage(event.message.reply_to.mid, pageAccessToken);
-        } else if (event.message?.attachments && event.message.attachments[0]?.type === 'image') {
-          imageUrl = event.message.attachments[0].payload.url;
+      const apiUrl = `${api.kenlie2}/pixtral-paid/`;
+      const { data } = await axios.get(apiUrl, {
+        params: {
+          question: userPrompt || "Answer all question that need to answer?",
+          image_url: imageUrl || ""
         }
+      });
+
+      if (!data || !data.response) {
+        return sendMessage(senderId, {
+          text: "⚠️ Unable to process your request. Try again."
+        }, pageAccessToken);
       }
 
-      const apiUrl = `${api.joshWebApi}/gemini`;
-      const response = await handleImageRecognition(apiUrl, userPrompt, imageUrl);
-      const result = response.gemini;
-
-      const header = "📸 𝗚𝗘𝗠𝗜𝗡𝗜-𝗚𝗢𝗢𝗚𝗟𝗘\n・───────────・\n";
-      await sendConcatenatedMessage(senderId, `${header}${result}`, pageAccessToken);
+      const header = "📸 𝗚𝗘𝗠𝗜𝗡𝗜-𝗚𝗢𝗢𝗚𝗟𝗘\n・──────────────・\n";
+      await sendMessage(senderId, { text: header + data.response }, pageAccessToken);
 
     } catch (error) {
-      console.error("Error in Gemini command:", error);
-      sendMessage(senderId, { text: `⚠️ Error: ${error.message || "Something went wrong."}` }, pageAccessToken);
+      console.error("Error in Gemini command:", error.message || error);
+      await sendMessage(senderId, {
+        text: "⚠️ An error occurred. Please try again later."
+      }, pageAccessToken);
     }
   }
 };
 
-async function handleImageRecognition(apiUrl, prompt, imageUrl) {
-  const { data } = await axios.get(apiUrl, {
-    params: {
-      prompt,
-      url: imageUrl || ""
+function getAttachmentUrl(event) {
+  const attachment = event.message?.attachments?.[0];
+  return attachment?.type === "image" ? attachment.payload.url : null;
+}
+
+async function getRepliedImage(event, pageAccessToken) {
+  if (event.message?.reply_to?.mid) {
+    try {
+      const { data } = await axios.get(`https://graph.facebook.com/v21.0/${event.message.reply_to.mid}/attachments`, {
+        params: { access_token: pageAccessToken }
+      });
+      const imageData = data?.data?.[0]?.image_data;
+      return imageData ? imageData.url : null;
+    } catch (error) {
+      console.error("Error fetching replied image:", error.message || error);
+      return null;
     }
-  });
-
-  return data;
-}
-
-async function getRepliedImage(mid, pageAccessToken) {
-  const { data } = await axios.get(`https://graph.facebook.com/v21.0/${mid}/attachments`, {
-    params: { access_token: pageAccessToken }
-  });
-
-  if (data && data.data.length > 0 && data.data[0].image_data) {
-    return data.data[0].image_data.url;
-  } else {
-    return "";
   }
-}
-
-async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
-  const maxMessageLength = 2000;
-
-  if (text.length > maxMessageLength) {
-    const messages = splitMessageIntoChunks(text, maxMessageLength);
-
-    for (const message of messages) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await sendMessage(senderId, { text: message }, pageAccessToken);
-    }
-  } else {
-    await sendMessage(senderId, { text }, pageAccessToken);
+  return null;
   }
-}
 
-function splitMessageIntoChunks(message, chunkSize) {
-  const chunks = [];
-  for (let i = 0; i < message.length; i += chunkSize) {
-    chunks.push(message.slice(i, i + chunkSize));
-  }
-  return chunks;
-}

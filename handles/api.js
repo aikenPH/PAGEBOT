@@ -1,5 +1,6 @@
 module.exports = {
   jaymar: "https://heru-apiv2.onrender.com",
+  kenlie2: "https://api.kenliejugarap.com",
   joshWebApi: "https://joshweb.click",
   kaizen: "https://kaiz-apis.gleeze.com",
   jerome: "https://jerome-web.gleeze.com",

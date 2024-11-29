@@ -5,15 +5,15 @@ const { sendMessage } = require('./sendMessage');
 const { handleTikTokVideo } = require('./handleTikTok');
 const { handleFacebookReelsVideo } = require('./handleFb');
 const { handleInstagramVideo } = require('./handleInstadl');
-
+const { handleCommand } = require('./handleCommand'); // Import handleCommand
 const commands = new Map();
 const lastImageByUser = new Map();
 const lastVideoByUser = new Map();
 
+// Dynamically load commands from the commands directory
 const commandFiles = fs.readdirSync(path.join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
-
 for (const file of commandFiles) {
-  const command = require(`../commands/${file}`);
+  const command = require(path.join(__dirname, '../commands', file));
   if (command.name && typeof command.name === 'string') {
     commands.set(command.name.toLowerCase(), command);
   }
@@ -46,7 +46,7 @@ async function handleMessage(event, pageAccessToken) {
           await commands.get('removebg').execute(senderId, [], pageAccessToken, lastImage);
           lastImageByUser.delete(senderId);
         } catch (error) {
-          await sendMessage(senderId, { text: 'An error occurred while removing the background.' }, pageAccessToken);
+          await sendMessage(senderId, { text: 'An error occurred while processing the image.' }, pageAccessToken);
         }
       } else {
         await sendMessage(senderId, { text: 'Please send an image first, then type "removebg" to remove its background.' }, pageAccessToken);
@@ -59,23 +59,16 @@ async function handleMessage(event, pageAccessToken) {
       const lastVideo = lastVideoByUser.get(senderId);
       const mediaToUpload = lastImage || lastVideo;
 
-      try {
-        await commands.get('imgur').execute(senderId, [], pageAccessToken, mediaToUpload);
-        lastImageByUser.delete(senderId);
-        lastVideoByUser.delete(senderId);
-      } catch (error) {
-        await sendMessage(senderId, { text: 'An error occurred while uploading to Imgur.' }, pageAccessToken);
-      }
-      return;
-    }
-
-    if (messageText === 'remini') {
-      const lastImage = lastImageByUser.get(senderId);
-      try {
-        await commands.get('remini').execute(senderId, [], pageAccessToken, event, lastImage);
-        lastImageByUser.delete(senderId);
-      } catch (error) {
-        await sendMessage(senderId, { text: 'An error occurred while enhancing the image.' }, pageAccessToken);
+      if (mediaToUpload) {
+        try {
+          await commands.get('imgur').execute(senderId, [], pageAccessToken, mediaToUpload);
+          lastImageByUser.delete(senderId);
+          lastVideoByUser.delete(senderId);
+        } catch (error) {
+          await sendMessage(senderId, { text: 'An error occurred while uploading the media to Imgur.' }, pageAccessToken);
+        }
+      } else {
+        await sendMessage(senderId, { text: 'Please send an image or video first, then type "imgur" to upload.' }, pageAccessToken);
       }
       return;
     }
@@ -124,16 +117,7 @@ async function handleMessage(event, pageAccessToken) {
         sendMessage(senderId, { text: `There was an error executing the command "${commandName}". Please try again later.` }, pageAccessToken);
       }
     } else {
-      sendMessage(senderId, {
-        text: `Unknown command: "${commandName}". Type "help" for a list of available commands.`,
-        quick_replies: [
-          {
-            content_type: "text",
-            title: "Help",
-            payload: "HELP_PAYLOAD"
-          }
-        ]
-      }, pageAccessToken);
+      await handleCommand(senderId, commandName, args, pageAccessToken); // Use handleCommand for auto commands
     }
   }
 }

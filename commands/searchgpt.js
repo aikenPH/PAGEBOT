@@ -1,6 +1,5 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
-const api = require('../handles/api');
 
 async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
@@ -38,7 +37,7 @@ module.exports = {
     }
 
     const question = args.join(' ');
-    const apiUrl = `${api.kenlie}/searchgpt/?question=${encodeURIComponent(question)}`;
+    const apiUrl = `https://api.kenliejugarap.com/searchgpt/?question=${encodeURIComponent(question)}`;
 
     try {
       const response = await axios.get(apiUrl);
@@ -60,3 +59,4 @@ module.exports = {
     }
   }
 };
+        

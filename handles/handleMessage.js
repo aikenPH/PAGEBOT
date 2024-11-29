@@ -39,40 +39,6 @@ async function handleMessage(event, pageAccessToken) {
     if (await handleTikTokVideo(event, pageAccessToken)) return;
     if (await handleInstagramVideo(event, pageAccessToken)) return;
 
-    if (messageText === 'removebg') {
-      const lastImage = lastImageByUser.get(senderId);
-      if (lastImage) {
-        try {
-          await commands.get('removebg').execute(senderId, [], pageAccessToken, lastImage);
-          lastImageByUser.delete(senderId);
-        } catch (error) {
-          await sendMessage(senderId, { text: 'An error occurred while processing the image.' }, pageAccessToken);
-        }
-      } else {
-        await sendMessage(senderId, { text: 'Please send an image first, then type "removebg" to remove its background.' }, pageAccessToken);
-      }
-      return;
-    }
-
-    if (messageText === 'imgur') {
-      const lastImage = lastImageByUser.get(senderId);
-      const lastVideo = lastVideoByUser.get(senderId);
-      const mediaToUpload = lastImage || lastVideo;
-
-      if (mediaToUpload) {
-        try {
-          await commands.get('imgur').execute(senderId, [], pageAccessToken, mediaToUpload);
-          lastImageByUser.delete(senderId);
-          lastVideoByUser.delete(senderId);
-        } catch (error) {
-          await sendMessage(senderId, { text: 'An error occurred while uploading the media to Imgur.' }, pageAccessToken);
-        }
-      } else {
-        await sendMessage(senderId, { text: 'Please send an image or video first, then type "imgur" to upload.' }, pageAccessToken);
-      }
-      return;
-    }
-
     if (messageText.startsWith('gemini')) {
       const lastImage = lastImageByUser.get(senderId);
       const args = messageText.split(/\s+/).slice(1);
@@ -82,6 +48,19 @@ async function handleMessage(event, pageAccessToken) {
         lastImageByUser.delete(senderId);
       } catch (error) {
         await sendMessage(senderId, { text: 'An error occurred while processing the Gemini command.' }, pageAccessToken);
+      }
+      return;
+    }
+
+    if (messageText.startsWith('llamavision')) {
+      const lastImage = lastImageByUser.get(senderId);
+      const args = messageText.split(/\s+/).slice(1);
+
+      try {
+        await commands.get('llamavision').execute(senderId, args, pageAccessToken, event, lastImage);
+        lastImageByUser.delete(senderId);
+      } catch (error) {
+        await sendMessage(senderId, { text: 'An error occurred while processing the LlamaVision command.' }, pageAccessToken);
       }
       return;
     }
@@ -141,3 +120,4 @@ async function getAttachments(mid, pageAccessToken) {
 }
 
 module.exports = { handleMessage };
+      

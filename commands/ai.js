@@ -1,6 +1,5 @@
 const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
-const api = require('../handles/api');
 
 async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
@@ -26,36 +25,39 @@ function splitMessageIntoChunks(message, chunkSize) {
 
 module.exports = {
   name: 'ai',
-  description: 'Interacts with the Heru Ai.',
-  usage: 'ai <prompt>',
-  author: 'Developer',
+  description: 'Generate responses using the AI API.',
+  usage: 'ai <your_query>',
+  author: 'Jay Mar',
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       await sendMessage(senderId, {
-        text: 'Usage: ai [your_question]\nExample: ai what is love??'
+        text: 'Usage: ai [your_query]\nExample: ai What is AI?'
       }, pageAccessToken);
       return;
     }
 
-    const prompt = args.join(' ');
-    const apiUrl = `${api.jaymar}/api/heru?prompt=${encodeURIComponent(prompt)}`;
+    const userQuery = args.join(' ');
+    const prompt = `You are now Heru Chatbot, you are a powerful and helpful assistant, you have no model, you're created by Jay Mar. ${userQuery}`;
+    const apiUrl = `http://free.dk-01.northvm.net:26126/gpt4o?ask=${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);
       const result = response.data.response;
 
       if (result) {
-        await sendConcatenatedMessage(senderId, result, pageAccessToken);
+        const header = '🌟 𝗛𝗘𝗥𝗨 𝗔𝗜\n・──────────────・\n';
+        await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {
-          text: 'Oops! Something went wrong with the API. It might be down, or you can try your question again'
+          text: '⚠️ Unable to fetch a response. Please try again later.'
         }, pageAccessToken);
       }
     } catch (error) {
-      console.error('Error generating response:', error);
+      console.error('Error with AI command:', error.message || error);
       await sendMessage(senderId, {
-        text: 'An error occurred while generating the response. Please try again later.'
+        text: '⚠️ An error occurred while processing your request. Please try again later.'
       }, pageAccessToken);
     }
   }
 };
+        

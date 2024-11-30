@@ -1,6 +1,5 @@
 const axios = require("axios");
 const { sendMessage } = require("../handles/sendMessage");
-const api = require("../handles/api");
 
 module.exports = {
   name: "flux",
@@ -20,11 +19,13 @@ module.exports = {
     }
 
     try {
-      const response = await axios.get(`${api.kinlie2}/flux/`, {
+      await sendMessage(senderId, { text: "🎨 Generating image, please wait..." }, pageAccessToken);
+
+      const response = await axios.get(`https://api.kenliejugarap.com/flux/`, {
         params: { prompt },
       });
 
-      const data = response.data.response;
+      const data = response.data;
 
       if (!data || !data.imageUrl) {
         return sendMessage(
@@ -60,4 +61,3 @@ module.exports = {
     }
   },
 };
-          

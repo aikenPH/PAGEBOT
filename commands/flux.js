@@ -1,63 +1,42 @@
-const axios = require("axios");
-const { sendMessage } = require("../handles/sendMessage");
+const axios = require('axios');
 
 module.exports = {
-  name: "flux",
-  description: "Generate an image based on a prompt",
-  author: "Jay Mar",
-  usage: "flux [prompt]",
-
-  async execute(senderId, args, pageAccessToken) {
-    const prompt = args.join(" ").trim();
-
-    if (!prompt) {
-      return sendMessage(
-        senderId,
-        { text: "Please provide a prompt for the image generation. Example: flux A futuristic cityscape." },
-        pageAccessToken
-      );
+  name: 'flux',
+  description: 'Generate image using flux',
+  usage: 'flux [prompt]',  // Usage
+  author: 'Jerome',
+  async execute(senderId, args, pageAccessToken, sendMessage) {
+    if (args.length === 0) {
+      return sendMessage(senderId, { text: 'Usage: flux [your_prompt]: Example flux dog' }, pageAccessToken);
     }
+
+    const prompt = args.join(' ');
+    const apiUrl = `https://jerome-web.onrender.com/service/api/bing?prompt=${encodeURIComponent(prompt)}`;
 
     try {
-      await sendMessage(senderId, { text: "🎨 Generating image, please wait..." }, pageAccessToken);
-
-      const response = await axios.get(`https://api.kenliejugarap.com/flux/`, {
-        params: { prompt },
-      });
-
+      const response = await axios.get(apiUrl);
       const data = response.data;
 
-      if (!data || !data.imageUrl) {
-        return sendMessage(
-          senderId,
-          { text: "❌ Unable to generate the image. Please try again with a different prompt." },
-          pageAccessToken
-        );
+      if (data.success && data.result && data.result.length > 0) {
+        const imageMessages = data.result.slice(0, 2).map((imageUrl) => ({
+          attachment: {
+            type: 'image',
+            payload: {
+              url: imageUrl,
+              is_reusable: true
+            }
+          }
+        }));
+
+        for (const imageMessage of imageMessages) {
+          await sendMessage(senderId, imageMessage, pageAccessToken);
+        }
+      } else {
+        sendMessage(senderId, { text: `Sorry, no images were found for "${prompt}".` }, pageAccessToken);
       }
-
-      const messageWithImage = {
-        attachment: {
-          type: "image",
-          payload: {
-            url: data.imageUrl,
-            is_reusable: true,
-          },
-        },
-      };
-
-      await sendMessage(senderId, messageWithImage, pageAccessToken);
-      await sendMessage(
-        senderId,
-        { text: `✅ Image generated successfully! Prompt: "${prompt}"` },
-        pageAccessToken
-      );
     } catch (error) {
-      console.error("Error in flux command:", error.message || error);
-      await sendMessage(
-        senderId,
-        { text: "❌ An error occurred while generating the image. Please try again later." },
-        pageAccessToken
-      );
+      console.error('Error fetching Bing images:', error);
+      sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
     }
-  },
+  }
 };

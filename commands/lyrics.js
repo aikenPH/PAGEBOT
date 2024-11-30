@@ -1,76 +1,60 @@
-const axios = require("axios");
+const axios = require('axios');
 const { sendMessage } = require('../handles/sendMessage');
-const api = require('../handles/api');
 
 module.exports = {
-  name: "lyrics",
-  description: "Get song lyrics by title",
-  author: "chilli",
+  name: 'lyrics',
+  description: 'Fetch song lyrics',
+  usage: 'lyrics [song name]',
+  author: 'Jay Mar',
 
-  async execute(kupal, pogi, sili) {
-    const kanta = pogi.join(" ");
-
-    if (!kanta) {
-      return sendMessage(kupal, {
-        text: `Usage: lyrics [song_title]\nExample: lyrics blue`
-      }, sili);
+  async execute(senderId, args, pageAccessToken) {
+    if (!args.length) {
+      await sendMessage(senderId, { text: 'Please provide the name of the song.' }, pageAccessToken);
+      return;
     }
 
+    const query = args.join(' ').trim();
+
     try {
-      const res = await axios.get(`${api.joshWebApi}/search/lyrics`, {
-        params: { q: kanta }
-      });
+      const response = await axios.get(`https://kaiz-apis.gleeze.com/api/lyrics?song=${encodeURIComponent(query)}`);
+      const result = response.data;
 
-      if (!res.data || !res.data.result) {
-        throw new Error("No lyrics found for this song.");
-      }
+      if (result && result.lyrics) {
+        const { title, artist, lyrics, image } = result;
+        const messages = splitMessage(title, artist, lyrics, 2000);
+        for (const message of messages) {
+          await sendMessage(senderId, { text: message }, pageAccessToken);
+        }
 
-      const { title, artist, lyrics, image } = res.data.result;
-      const lyricsMessage = `🎵 -${title}- by -${artist}-\n\n${lyrics}`;
-
-      await sendConcatenatedMessage(kupal, lyricsMessage, sili);
-
-      if (image) {
-        setTimeout(async () => {
-          await sendMessage(kupal, {
+        if (image) {
+          await sendMessage(senderId, {
             attachment: {
-              type: "image",
+              type: 'image',
               payload: {
-                url: image
+                url: image,
+                is_reusable: true
               }
             }
-          }, sili);
-        }, 1000);
+          }, pageAccessToken);
+        }
+      } else {
+        await sendMessage(senderId, { text: 'Sorry, no lyrics were found for your query.' }, pageAccessToken);
       }
-
     } catch (error) {
-      console.error("Error retrieving lyrics:", error);
-      sendMessage(kupal, {
-        text: `Error retrieving lyrics. Please try again or check your input.`
-      }, sili);
+      console.error('Error fetching lyrics:', error.message);
+      await sendMessage(senderId, { text: 'Sorry, there was an error processing your request.' }, pageAccessToken);
     }
   }
 };
 
-async function sendConcatenatedMessage(kupal, text, sili) {
-  const maxMessageLength = 2000;
-
-  if (text.length > maxMessageLength) {
-    const messages = splitMessageIntoChunks(text, maxMessageLength);
-
-    for (const message of messages) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await sendMessage(kupal, { text: message }, sili);
-    }
-  } else {
-    await sendMessage(kupal, { text }, sili);
-  }
-}
-
-function splitMessageIntoChunks(mensahe, laki) {
+const splitMessage = (title, artist, lyrics, chunkSize) => {
+  const message = `Title: ${title}\nArtist: ${artist}\n\n${lyrics}`;
   const chunks = [];
-  for (let i = 0; i < mensahe.length; i += laki) {
-    chunks.push(mensahe.slice(i, i + laki));
+  
+  for (let i = 0; i < message.length; i += chunkSize) {
+    chunks.push(message.slice(i, i + chunkSize));
   }
+
   return chunks;
-}
+};
+                

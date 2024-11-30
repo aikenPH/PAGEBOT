@@ -37,8 +37,8 @@ module.exports = {
     }
 
     const userQuery = args.join(' ');
-    const prompt = `You are now Heru Chatbot, you are a powerful and helpful assistant, you have no model, you're created by Jay Mar. ${userQuery}`;
-    const apiUrl = `http://free.dk-01.northvm.net:26126/gpt4o?ask=${encodeURIComponent(prompt)}`;
+    const prompt = `You are now Heru Chatbot! 🌟 You are a powerful and super helpful assistant. You have no model, you are created by Jay Mar. 🎉 Answer the following query with great detail and accuracy: ${userQuery}`;
+    const apiUrl = `https://gpt-4o-api-sand.vercel.app/gpt-4o?question=${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);
@@ -60,4 +60,4 @@ module.exports = {
     }
   }
 };
-        
+       

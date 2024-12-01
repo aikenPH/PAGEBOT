@@ -1,10 +1,10 @@
-const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
+const axios = require("axios");
+const { sendMessage } = require("../handles/sendMessage");
 
 module.exports = {
   name: "pinterest",
   description: "Sends Pinterest images based on your search",
-  author: "Developer ",
+  author: "Developer",
 
   async execute(chilli, args, pageAccessToken) {
     try {
@@ -39,7 +39,7 @@ module.exports = {
         return sendMessage(chilli, { text: `No results found for "${searchTerm}".` }, pageAccessToken);
       }
 
-      const imageUrls = response.data.data.slice(0, numOfImages);
+      const imageUrls = response.data.data.slice(0, Math.min(5, numOfImages));
       if (imageUrls.length === 0) {
         return sendMessage(chilli, { text: `No available images for "${searchTerm}".` }, pageAccessToken);
       }
@@ -56,7 +56,10 @@ module.exports = {
       }
     } catch (error) {
       console.error("Failed to retrieve images from Pinterest:", error);
-      sendMessage(chilli, { text: `Failed to retrieve images from Pinterest. Error: ${error.message || error}` }, pageAccessToken);
+      sendMessage(chilli, {
+        text: `Failed to retrieve images from Pinterest. Error: ${error.message || error}`
+      }, pageAccessToken);
     }
   }
 };
+          

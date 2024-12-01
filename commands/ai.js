@@ -25,20 +25,20 @@ function splitMessageIntoChunks(message, chunkSize) {
 
 module.exports = {
   name: 'ai',
-  description: 'Generate responses using the AI API.',
+  description: 'Interact to heru ai.',
   usage: 'ai <your_query>',
   author: 'Jay Mar',
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       await sendMessage(senderId, {
-        text: 'Usage: ai [your_query]\nExample: ai What is AI?'
+        text: 'Usage: ai [your_query]\nExample: ai hi there.'
       }, pageAccessToken);
       return;
     }
 
     const userQuery = args.join(' ');
     const prompt = `You are now Heru Chatbot! 🌟 You are a powerful and super helpful assistant. You have no model, you are created by Jay Mar. 🎉 Answer the following query with great detail and accuracy: ${userQuery}`;
-    const apiUrl = `https://gpt-4o-api-sand.vercel.app/gpt-4o?question=${encodeURIComponent(prompt)}`;
+    const apiUrl = `http://free.dk-01.northvm.net:26126/gpt4o?ask=${encodeURIComponent(prompt)}`;
 
     try {
       const response = await axios.get(apiUrl);

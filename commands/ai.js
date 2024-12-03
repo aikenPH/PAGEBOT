@@ -3,19 +3,19 @@ const { sendMessage } = require("../handles/sendMessage");
 
 module.exports = {
   name: "ai",
-  description: "Interact to gpt-4o.",
+  description: "Interact to FreeGPT-OpenAI.",
   usage: "ai [your_prompt]",
   author: "Jay Mar",
 
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       return sendMessage(senderId, {
-        text: "Usage: ai [your_prompt]\nExample: ai Explain quantum physics in simple terms.",
+        text: "Usage: ai [your_prompt]\nExample: ai What is the capital of France?",
       }, pageAccessToken);
     }
 
     const question = args.join(" ");
-    const apiUrl = "https://gpt-4o-api-sand.vercel.app/gpt-4o";
+    const apiUrl = "https://api.kenliejugarap.com/freegpt-openai/";
 
     try {
       const { data } = await axios.get(apiUrl, {
@@ -59,4 +59,5 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-  }
+    }
+       

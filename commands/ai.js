@@ -1,5 +1,43 @@
-const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
+const axios = require("axios");
+const { sendMessage } = require("../handles/sendMessage");
+
+module.exports = {
+  name: "ai",
+  description: "Interact to gpt-4o.",
+  usage: "ai [your_prompt]",
+  author: "Jay Mar",
+
+  async execute(senderId, args, pageAccessToken) {
+    if (args.length === 0) {
+      return sendMessage(senderId, {
+        text: "Usage: ai [your_prompt]\nExample: ai Explain quantum physics in simple terms.",
+      }, pageAccessToken);
+    }
+
+    const question = args.join(" ");
+    const apiUrl = "https://gpt-4o-api-sand.vercel.app/gpt-4o";
+
+    try {
+      const { data } = await axios.get(apiUrl, {
+        params: { question },
+      });
+
+      if (data && data.response) {
+        const header = "🤖 𝗔𝗜-𝗥𝗘𝗦𝗣𝗢𝗡𝗦𝗘\n・──────────────・\n";
+        await sendConcatenatedMessage(senderId, header + data.response, pageAccessToken);
+      } else {
+        return sendMessage(senderId, {
+          text: "⚠️ Unable to fetch a response. Please try again later.",
+        }, pageAccessToken);
+      }
+    } catch (error) {
+      console.error("Error with AI command:", error.message || error);
+      return sendMessage(senderId, {
+        text: "⚠️ An error occurred while processing your request. Please try again later.",
+      }, pageAccessToken);
+    }
+  },
+};
 
 async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
@@ -7,7 +45,7 @@ async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
     for (const message of messages) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Ensure messages are sent with a delay
       await sendMessage(senderId, { text: message }, pageAccessToken);
     }
   } else {
@@ -21,43 +59,4 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-}
-
-module.exports = {
-  name: 'ai',
-  description: 'Interact to heru ai.',
-  usage: 'ai <your_query>',
-  author: 'Jay Mar',
-  async execute(senderId, args, pageAccessToken) {
-    if (args.length === 0) {
-      await sendMessage(senderId, {
-        text: 'Usage: ai [your_query]\nExample: ai hi there.'
-      }, pageAccessToken);
-      return;
-    }
-
-    const userQuery = args.join(' ');
-    const prompt = `You are now Heru Chatbot! 🌟 You are a powerful and super helpful assistant. You have no model, you are created by Jay Mar. 🎉 Answer the following query with great detail and accuracy: ${userQuery}`;
-    const apiUrl = `http://free.dk-01.northvm.net:26126/gpt4o?ask=${encodeURIComponent(prompt)}`;
-
-    try {
-      const response = await axios.get(apiUrl);
-      const result = response.data.response;
-
-      if (result) {
-        const header = '🌟 𝗛𝗘𝗥𝗨 𝗔𝗜\n・──────────────・\n';
-        await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
-      } else {
-        await sendMessage(senderId, {
-          text: '⚠️ Unable to fetch a response. Please try again later.'
-        }, pageAccessToken);
-      }
-    } catch (error) {
-      console.error('Error with AI command:', error.message || error);
-      await sendMessage(senderId, {
-        text: '⚠️ An error occurred while processing your request. Please try again later.'
-      }, pageAccessToken);
-    }
   }
-};
-       

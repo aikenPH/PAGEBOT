@@ -2,15 +2,15 @@ const axios = require("axios");
 const { sendMessage } = require("../handles/sendMessage");
 
 module.exports = {
-  name: "arxiv",
-  description: "Search articles from Arxiv based on a query.",
+  name: "arvix",
+  description: "Search articles from Arvix based on a query.",
   usage: "arxiv [search_query]",
   author: "Jay Mar",
 
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       return sendMessage(senderId, {
-        text: "Usage: arxiv [search_query]\nExample: arxiv quantum physics",
+        text: "Usage: arvix [search_query]\nExample: arvix quantum physics",
       }, pageAccessToken);
     }
 
@@ -25,7 +25,7 @@ module.exports = {
       if (data && data.article) {
         const article = data.article;
         const response = `
-📄 𝗔𝗿𝘅𝗶𝘃 𝗔𝗿𝘁𝗶𝗰𝗹𝗲\n・──────────────・
+📄 𝗔𝗿𝘃𝗶𝘅 𝗔𝗿𝘁𝗶𝗰𝗹𝗲\n・──────────────・
 🔗 Title: ${article.title || "N/A"}
 📅 Published: ${article.published || "N/A"}
 👨‍🔬 Authors: ${article.authors ? article.authors.join(", ") : "N/A"}

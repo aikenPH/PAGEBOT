@@ -1,33 +1,39 @@
 const axios = require("axios");
 const { sendMessage } = require("../handles/sendMessage");
+const api = require("../handles/api");
 
 module.exports = {
   name: "ai",
-  description: "Interact to FreeGPT-OpenAI.",
+  description: "Generate responses using GPT-4.",
   usage: "ai [your_prompt]",
   author: "Jay Mar",
 
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       return sendMessage(senderId, {
-        text: "Usage: ai [your_prompt]\nExample: ai What is the capital of France?",
+        text: "Usage: ai [your_prompt]\nExample: ai Write a poem about the sea.",
       }, pageAccessToken);
     }
 
-    const question = args.join(" ");
-    const apiUrl = "https://api.kenliejugarap.com/freegpt-openai/";
+    const prompt = args.join(" ");
+    const apiUrl = `${api.jaymar}/api/gpt-4o`;
 
     try {
       const { data } = await axios.get(apiUrl, {
-        params: { question },
+        params: { prompt },
       });
 
       if (data && data.response) {
-        const header = "🤖 𝗔𝗜-𝗥𝗘𝗦𝗣𝗢𝗡𝗦𝗘\n・──────────────・\n";
-        await sendConcatenatedMessage(senderId, header + data.response, pageAccessToken);
+        const response = `
+🤖 𝗔𝗜
+・──────────────・
+${data.response}
+        `.trim();
+
+        await sendConcatenatedMessage(senderId, response, pageAccessToken);
       } else {
         return sendMessage(senderId, {
-          text: "⚠️ Unable to fetch a response. Please try again later.",
+          text: "⚠️ Unable to generate a response. Please try again later.",
         }, pageAccessToken);
       }
     } catch (error) {
@@ -45,7 +51,7 @@ async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
     for (const message of messages) {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Ensure messages are sent with a delay
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Add a delay between messages
       await sendMessage(senderId, { text: message }, pageAccessToken);
     }
   } else {
@@ -59,5 +65,5 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-    }
-       
+      }
+    

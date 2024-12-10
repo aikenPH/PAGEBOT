@@ -2,56 +2,13 @@ const axios = require("axios");
 const { sendMessage } = require("../handles/sendMessage");
 const api = require("../handles/api");
 
-module.exports = {
-  name: "ai",
-  description: "Generate responses using GPT-4.",
-  usage: "ai [your_prompt]",
-  author: "Jay Mar",
-
-  async execute(senderId, args, pageAccessToken) {
-    if (args.length === 0) {
-      return sendMessage(senderId, {
-        text: "Usage: ai [your_prompt]\nExample: ai Write a poem about the sea.",
-      }, pageAccessToken);
-    }
-
-    const prompt = args.join(" ");
-    const apiUrl = `${api.jaymar}/api/gpt-4o`;
-
-    try {
-      const { data } = await axios.get(apiUrl, {
-        params: { prompt },
-      });
-
-      if (data && data.response) {
-        const response = `
-🤖 𝗔𝗜
-・──────────────・
-${data.response}
-        `.trim();
-
-        await sendConcatenatedMessage(senderId, response, pageAccessToken);
-      } else {
-        return sendMessage(senderId, {
-          text: "⚠️ Unable to generate a response. Please try again later.",
-        }, pageAccessToken);
-      }
-    } catch (error) {
-      console.error("Error with AI command:", error.message || error);
-      return sendMessage(senderId, {
-        text: "⚠️ An error occurred while processing your request. Please try again later.",
-      }, pageAccessToken);
-    }
-  },
-};
-
 async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
 
   if (text.length > maxMessageLength) {
     const messages = splitMessageIntoChunks(text, maxMessageLength);
     for (const message of messages) {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Add a delay between messages
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await sendMessage(senderId, { text: message }, pageAccessToken);
     }
   } else {
@@ -65,5 +22,42 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
+}
+
+module.exports = {
+  name: "ai",
+  description: "Generate responses using GPT-4.",
+  usage: "ai [your_prompt]",
+  author: "Jay Mar",
+  async execute(senderId, args, pageAccessToken) {
+    if (args.length === 0) {
+      await sendMessage(senderId, {
+        text: "Usage: ai [your_prompt]\nExample: ai Write a poem about the sea.",
+      }, pageAccessToken);
+      return;
+    }
+
+    const prompt = args.join(" ");
+    const apiUrl = `${api.jaymar}/api/gpt-4o`;
+
+    try {
+      const response = await axios.get(apiUrl, { params: { prompt } });
+      const result = response.data.response;
+
+      if (result) {
+        const header = "🤖 𝗔𝗜\n・──────────────・\n";
+        await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
+      } else {
+        await sendMessage(senderId, {
+          text: "⚠️ Unable to generate a response. Please try again later.",
+        }, pageAccessToken);
       }
+    } catch (error) {
+      console.error("Error with AI command:", error.message || error);
+      await sendMessage(senderId, {
+        text: "⚠️ An error occurred while processing your request. Please try again later.",
+      }, pageAccessToken);
+    }
+  },
+};
     

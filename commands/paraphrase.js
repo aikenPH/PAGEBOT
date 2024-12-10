@@ -23,9 +23,11 @@ module.exports = {
         params: { text },
       });
 
-      if (data && data.paraphrased_text) {
-        const response = `🤖 𝗣𝗔𝗥𝗔𝗣𝗛𝗥𝗔𝗦𝗘\n・──────────────・
-${data.paraphrased_text}
+      if (data && data.response) {
+        const response = `
+🤖 𝗣𝗔𝗥𝗔𝗣𝗛𝗥𝗔𝗦𝗘
+・──────────────・
+${data.response}
         `.trim();
 
         await sendConcatenatedMessage(senderId, response, pageAccessToken);
@@ -63,5 +65,5 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-      }
-                                      
+}
+  

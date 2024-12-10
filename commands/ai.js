@@ -42,7 +42,7 @@ module.exports = {
 
     try {
       const response = await axios.get(apiUrl, { params: { prompt } });
-      const result = response.data.response;
+      const result = response.data.content;
 
       if (result) {
         const header = "🤖 𝗔𝗜\n・──────────────・\n";

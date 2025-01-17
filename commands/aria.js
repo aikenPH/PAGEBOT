@@ -1,6 +1,5 @@
 const axios = require("axios");
 const { sendMessage } = require("../handles/sendMessage");
-const api = require("../handles/api");
 
 async function sendConcatenatedMessage(senderId, text, pageAccessToken) {
   const maxMessageLength = 2000;
@@ -24,36 +23,48 @@ function splitMessageIntoChunks(message, chunkSize) {
   return chunks;
 }
 
+function generateRandomUid() {
+  return Math.random().toString(36).substring(2, 10);
+}
+
 module.exports = {
-  name: "blackbox",
-  description: "Generate AI-powered responses using Blackbox.",
-  usage: "blackbox <your_query>",
+  name: "aria",
+  description: "Generate responses using the Aria.",
+  usage: "aria [your_prompt]",
   author: "Jay Mar",
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
-      await sendMessage(senderId, {
-        text: "Usage: blackbox [your_query]\nExample: blackbox What is AI?",
-      }, pageAccessToken);
+      await sendMessage(
+        senderId,
+        {
+          text: "Usage: aria [your_prompt]\nExample: aria What is quantum entanglement?",
+        },
+        pageAccessToken
+      );
       return;
     }
 
-    const query = args.join(" ");
-    const apiUrl = `${api.kenlie2}/blackbox/?text=${encodeURIComponent(query)}`;
+    const prompt = args.join(" ");
+    const uid = generateRandomUid();
+    const apiUrl = `https://yt-video-production.up.railway.app/Aria`;
 
     try {
-      const response = await axios.get(apiUrl);
+      const response = await axios.get(apiUrl, {
+        params: { q: prompt, userid: uid },
+      });
+
       const result = response.data.response;
 
       if (result) {
-        const header = "🤖 𝗕𝗟𝗔𝗖𝗞𝗕𝗢𝗫\n・──────────────・\n";
+        const header = "🤖 𝗔𝗥𝗜𝗔-𝗔𝗜\n・──────────────・\n";
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {
-          text: "⚠️ Unable to fetch a response. Please try again later.",
+          text: "⚠️ Unable to generate a response. Please try again later.",
         }, pageAccessToken);
       }
     } catch (error) {
-      console.error("Error with Blackbox command:", error.message || error);
+      console.error("Error with Aria command:", error.message || error);
       await sendMessage(senderId, {
         text: "⚠️ An error occurred while processing your request. Please try again later.",
       }, pageAccessToken);

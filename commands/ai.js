@@ -61,7 +61,7 @@ module.exports = {
     } catch (error) {
       console.error("Error with AI command:", error.message || error);
       await sendMessage(senderId, {
-        text: "⚠️ An error occurred while processing your request. Please try again later.",
+        text: "⚠️ API SUCK\nPlease contact Jaymar on Facebook: https://www.facebook.com/jaymar.dev.00.",
       }, pageAccessToken);
     }
   },

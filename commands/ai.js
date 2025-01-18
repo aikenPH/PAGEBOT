@@ -23,24 +23,9 @@ function splitMessageIntoChunks(message, chunkSize) {
   return chunks;
 }
 
-function generateUidPool(count) {
-  const uids = [];
-  for (let i = 0; i < count; i++) {
-    uids.push(Math.random().toString(36).substring(2, 10));
-  }
-  return uids;
-}
-
-const uidPool = generateUidPool(100);
-
-function getRandomUid() {
-  const randomIndex = Math.floor(Math.random() * uidPool.length);
-  return uidPool[randomIndex];
-}
-
 module.exports = {
   name: "ai",
-  description: "Generate responses using GPT-4 Omni.",
+  description: "Talk to Heru Ai",
   usage: "ai [your_prompt]",
   author: "Jay Mar",
   async execute(senderId, args, pageAccessToken) {
@@ -56,18 +41,17 @@ module.exports = {
     }
 
     const prompt = args.join(" ");
-    const uid = getRandomUid();
-    const apiUrl = `https://yt-video-production.up.railway.app/gpt4-omni`;
+    const apiUrl = `https://heru-api-v1.vercel.app/heru`;
 
     try {
       const response = await axios.get(apiUrl, {
-        params: { ask: prompt, userid: uid },
+        params: { question: prompt },
       });
 
       const result = response.data.response;
 
       if (result) {
-        const header = "🤖 𝗔𝗜 𝗥𝗘𝗦𝗣𝗢𝗡𝗦𝗘\n・──────────────・\n";
+        const header = "☬ 𝗛𝗘𝗥𝗨 𝗔𝗜\n・──────────────・\n";
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {

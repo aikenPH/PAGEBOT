@@ -16,22 +16,23 @@ module.exports = {
     const query = args.join(' ').trim();
 
     try {
-      const response = await axios.get(`https://kaiz-apis.gleeze.com/api/lyrics?song=${encodeURIComponent(query)}`);
+      const response = await axios.get(`https://kaiz-apis.gleeze.com/api/lyrics?title=${encodeURIComponent(query)}`);
       const result = response.data;
 
       if (result && result.lyrics) {
-        const { title, artist, lyrics, image } = result;
-        const messages = splitMessage(title, artist, lyrics, 2000);
+        const { title, lyrics, thumbnail } = result;
+        const messages = splitMessage(title, lyrics, 2000);
+
         for (const message of messages) {
           await sendMessage(senderId, { text: message }, pageAccessToken);
         }
 
-        if (image) {
+        if (thumbnail) {
           await sendMessage(senderId, {
             attachment: {
               type: 'image',
               payload: {
-                url: image,
+                url: thumbnail,
                 is_reusable: true
               }
             }
@@ -47,8 +48,8 @@ module.exports = {
   }
 };
 
-const splitMessage = (title, artist, lyrics, chunkSize) => {
-  const message = `Title: ${title}\nArtist: ${artist}\n\n${lyrics}`;
+const splitMessage = (title, lyrics, chunkSize) => {
+  const message = `💹 𝗧𝗶𝘁𝗹𝗲: ${title}\n\n${lyrics}`;
   const chunks = [];
   
   for (let i = 0; i < message.length; i += chunkSize) {
@@ -57,4 +58,3 @@ const splitMessage = (title, artist, lyrics, chunkSize) => {
 
   return chunks;
 };
-                

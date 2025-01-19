@@ -6,6 +6,7 @@ const axios = require('axios');
 const { handleMessage } = require('./handles/handleMessage');
 const { handlePostback } = require('./handles/handlePostback');
 
+// Load commands dynamically
 const commandsPath = './commands';
 fs.readdirSync(commandsPath).forEach(file => {
   console.log(`Loaded command: ${file}`);
@@ -13,11 +14,13 @@ fs.readdirSync(commandsPath).forEach(file => {
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.static('public')); // Serve static files
 
 const VERIFY_TOKEN = 'pagebot';
 const PAGE_ACCESS_TOKEN = fs.readFileSync('token.txt', 'utf8').trim();
 const config = { pageAccessToken: PAGE_ACCESS_TOKEN };
 
+// Load menu commands
 const loadMenuCommands = async () => {
   try {
     const commandsDir = path.join(__dirname, 'commands');
@@ -53,6 +56,7 @@ const loadMenuCommands = async () => {
 
 loadMenuCommands();
 
+// Webhook verification
 app.get('/webhook', (req, res) => {
   const { 'hub.mode': mode, 'hub.verify_token': token, 'hub.challenge': challenge } = req.query;
   if (mode && token) {
@@ -64,6 +68,7 @@ app.get('/webhook', (req, res) => {
   }
 });
 
+// Webhook events
 app.post('/webhook', (req, res) => {
   const { body } = req;
 

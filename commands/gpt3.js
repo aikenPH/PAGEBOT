@@ -52,7 +52,7 @@ module.exports = {
         params: { q: question },
       });
 
-      const result = response.data.result;
+      const result = response.data.response;
 
       if (result) {
         const header = "🤖 𝗚𝗣𝗧-𝟯.𝟱\n・──────────────・\n";

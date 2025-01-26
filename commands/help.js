@@ -18,7 +18,7 @@ const convertToGothic = (text) => {
 module.exports = {
   name: 'help',
   description: 'Show available commands',
-  author: 'Jay Mar',
+  author: 'Marjhun Baylon',
   execute(kupal, pogi, sili) {
     const commandsDir = path.join(__dirname, '../commands');
     const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
@@ -44,10 +44,10 @@ module.exports = {
     }
 
     if (pogi[0] && pogi[0].toLowerCase() === 'all') {
-      const helpTextMessage = `${convertToGothic('╭─『 HERU CHATBOT 』')}\n` +
+      const helpTextMessage = `${convertToGothic('╭─『 𝗧𝗢𝗦𝗛𝗜𝗔 𝗖𝗛𝗔𝗧𝗕𝗢𝗧 』')}\n` +
         commands.map(cmd => `${convertToGothic(`│✧ ${cmd.title}`)}`).join('\n') + `\n` +
         `${convertToGothic('╰───────────◊')}\n` +
-        `${convertToGothic(`Dev: Jay Mar & My Girl`)}`;
+        `${convertToGothic(`Dev: Marjhun Baylon`)}`;
 
       return sendMessage(kupal, { text: helpTextMessage }, sili);
     }
@@ -60,12 +60,12 @@ module.exports = {
       return sendMessage(kupal, { text: convertToGothic(`Invalid page number. There are only ${totalPages} pages.`) }, sili);
     }
 
-    const helpTextMessage = `${convertToGothic('╭─『 HERU CHATBOT 』')}\n` +
+    const helpTextMessage = `${convertToGothic('╭─『 𝗧𝗢𝗦𝗛𝗜𝗔 𝗖𝗛𝗔𝗧𝗕𝗢𝗧 』')}\n` +
       commandsForPage.map(cmd => `${convertToGothic(`│✧ ${cmd.title}`)}`).join('\n') + `\n` +
       `${convertToGothic('╰───────────◊')}\n\n` +
       `${convertToGothic(`(Page ${page} of ${totalPages})`)}\n` +
       `${convertToGothic('Type "help [page number]" to see more commands & To see all commands Type "help all" to show all commands.')}\n` +
-      `${convertToGothic('Dev: Jay Mar & My Girl')}`;
+      `${convertToGothic('Dev: Marjhun Baylon')}`;
 
     const quickRepliesPage = commandsForPage.map((cmd) => ({
       content_type: "text",

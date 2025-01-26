@@ -27,7 +27,7 @@ module.exports = {
   name: "ai",
   description: "Talk to Heru Ai",
   usage: "ai [your_prompt]",
-  author: "Jay Mar",
+  author: "Marjhun Baylon",
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       await sendMessage(

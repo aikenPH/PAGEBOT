@@ -1,104 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Bot</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: #fff;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      padding: 25px 35px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      max-width: 550px;
-      width: 90%;
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h1 {
-      font-size: 2.8rem;
-      margin-bottom: 15px;
-      font-weight: 600;
-      color: #f5f5f5;
-    }
-
-    p {
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: #dcdcdc;
-      font-weight: 300;
-    }
-
-    .button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 25px;
-      background: #fff;
-      color: #2575fc;
-      text-decoration: none;
-      font-weight: 600;
-      border-radius: 30px;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .button:hover {
-      background: #2575fc;
-      color: #fff;
-      transform: translateY(-3px) scale(1.05);
-    }
-
-    .info {
-      margin-top: 30px;
-      font-size: 1rem;
-      text-align: left;
-      color: #ccc;
-      font-weight: 400;
-    }
-
-    .info p {
-      margin: 5px 0;
-    }
-
-    .highlight {
-      color: #fff;
-      font-weight: 600;
-    }
-  </style>
+  <title>TOSHIA CHATBOT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div class="container">
-    <h1>Welcome to My Bot</h1>
-    <p>This is the frontend interface served by the Express server. Enjoy using the bot!</p>
-    <a href="#" class="button">Learn More</a>
 
-    <div class="info">
-      <p><strong>Admin:</strong> <span class="highlight">Jay Mar</span></p>
+<body class="bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900 min-h-screen flex justify-center items-center font-poppins text-white">
+
+  <div class="bg-black bg-opacity-60 backdrop-blur-lg p-12 rounded-2xl shadow-2xl max-w-lg w-full text-center animate-fade-in">
+    <h1 class="text-4xl font-bold mb-6 text-white">Welcome to TOSHIA CHATBOT</h1>
+    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+      This is the frontend interface served by the Express server. Experience the power of TOSHIA with a professional
+      touch!
+    </p>
+    <a href="#" class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-gradient-to-l hover:from-blue-500 hover:to-purple-500 transform hover:scale-105 transition-all shadow-lg">Learn More</a>
+    <div class="mt-10 text-left text-sm text-gray-400">
+      <p><strong>Admin:</strong> <span class="text-white font-semibold">Marjhun Baylon</span></p>
       <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
       <p><strong>Current Time:</strong> <span id="currentTime"></span></p>
       <p><strong>Current Date:</strong> <span id="currentDate"></span></p>
@@ -128,5 +49,6 @@
     setInterval(updateTimeAndDate, 1000);
     setInterval(updateUptime, 1000);
   </script>
+
 </body>
 </html>

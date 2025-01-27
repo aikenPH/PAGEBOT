@@ -7,7 +7,7 @@ const token = fs.readFileSync('token.txt', 'utf8');
 module.exports = {
   name: 'anime',
   description: 'Search for anime information',
-  author: 'Jay Mar',
+  author: '𝗠𝗮𝗿𝗷𝗵𝘂𝗻 𝗕𝗮𝘆𝗹𝗼𝗻',
   usage: 'anime [anime title]',
 
   async execute(senderId, args) {

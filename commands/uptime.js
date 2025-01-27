@@ -27,7 +27,7 @@ module.exports = {
   name: 'uptime',
   description: 'Show uptime of the bot.',
   usage: 'uptime',
-  author: 'Jay Mar',
+  author: 'Marjhun Baylon',
   async execute(senderId, args, pageAccessToken) {
     const uptime = process.uptime();
 
@@ -63,7 +63,7 @@ module.exports = {
       uptimeMessage += `${seconds} Seconds.`;
     }
 
-    const message = `🤖 Heru Chatbot has been running for: ${uptimeMessage}`;
+    const message = `🤖 TOSHIA CHATBOT has been running for: ${uptimeMessage}`;
     await sendConcatenatedMessage(senderId, message, pageAccessToken);
   }
 };

@@ -25,9 +25,9 @@ function splitMessageIntoChunks(message, chunkSize) {
 
 module.exports = {
   name: "ai",
-  description: "Talk to Heru Ai",
+  description: "Talk to toshia ai",
   usage: "ai [your_prompt]",
-  author: "Marjhun Baylon",
+  author: "𝗠𝗮𝗿𝗷𝗵𝘂𝗻 𝗕𝗮𝘆𝗹𝗼𝗻",
   async execute(senderId, args, pageAccessToken) {
     if (args.length === 0) {
       await sendMessage(
@@ -41,17 +41,17 @@ module.exports = {
     }
 
     const prompt = args.join(" ");
-    const apiUrl = `https://heru-api-v1.vercel.app/heru`;
+    const apiUrl = `https://ai-api-production-ca04.up.railway.app/meta32`;
 
     try {
       const response = await axios.get(apiUrl, {
-        params: { question: prompt },
+        params: { content: prompt },
       });
 
-      const result = response.data.response;
+      const result = response.data.result; 
 
       if (result) {
-        const header = "☬ 𝗛𝗘𝗥𝗨 𝗔𝗜\n・──────────────・\n";
+        const header = "☬ 𝗧𝗢𝗦𝗛𝗜𝗔 𝗖𝗛𝗔𝗧𝗕𝗢𝗧\n・──────────────・\n";
         await sendConcatenatedMessage(senderId, header + result, pageAccessToken);
       } else {
         await sendMessage(senderId, {
@@ -61,7 +61,7 @@ module.exports = {
     } catch (error) {
       console.error("Error with AI command:", error.message || error);
       await sendMessage(senderId, {
-        text: "⚠️ API SUCK\nPlease contact Jaymar on Facebook: https://www.facebook.com/jaymar.dev.00.",
+        text: "⚠️ API error. Please contact Marjhun Baylon on Facebook: https://www.facebook.com/marjhuncutieee.",
       }, pageAccessToken);
     }
   },
